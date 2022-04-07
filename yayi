@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# YAYI
+# Yet Another YAY Installer
+
+[ -x /bin/yay ] && echo "yay already installed... YAY 🥳" && exit 0
+
+YAY="${1:-yay-bin}"
+PWD=$(pwd)
+
+install_requirements() {
+    sudo pacman -S --needed git base-devel
+}
+
+clone_yay() {
+    git clone "https://aur.archlinux.org/$YAY.git" "$(yay_cache_dir)"
+}
+
+yay_cache_dir() {
+    echo "${XDG_CACHE_HOME:-/tmp}/$YAY"
+}
+
+install_requirements && clone_yay && cd "$(yay_cache_dir)" && makepkg -si && cd "$PWD" || exit 1
+
